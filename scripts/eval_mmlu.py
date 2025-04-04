@@ -11,7 +11,7 @@ from retrieval_qa_benchmark.utils.config import load
 from retrieval_qa_benchmark.utils.factory import EvaluatorFactory
 
 p = ArgumentParser("Evaluation script for MMLU dataset")
-p.add_argument("--config", "-c", default="../config/mmlu.yaml")
+p.add_argument("--config", "-c", default="../config/mmlu-2.yaml")
 p.add_argument("--mmlu-subset", "-set", default="prehistory")
 p.add_argument("--outdir", "-o", default="results")
 p.add_argument("--topk", "-k", default=5)
