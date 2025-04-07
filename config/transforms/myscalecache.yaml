@@ -1,0 +1,14 @@
+
+type: MyScaleSemanticCache
+args:
+  msc_host: "msc-950b9f1f.us-east-1.aws.myscale.com"
+  msc_port: 443
+  msc_user: 'chatdata'
+  msc_pass: 'myscale_rocks'
+  table_name: wiki.Wikipedia
+  num_selected: 5
+  
+  cache_threshold: 6
+  cache_max_size: 100
+  cache_policy: LRU  # Can be FIFO, LRU, or LFU
+  enable_cache: true

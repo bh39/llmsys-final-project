@@ -5,3 +5,4 @@ args:
   msc_user: 'chatdata'
   msc_pass: 'myscale_rocks'
   table_name: wiki.Wikipedia
+  num_selected: 10
