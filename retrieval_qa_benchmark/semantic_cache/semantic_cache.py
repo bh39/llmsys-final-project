@@ -7,6 +7,7 @@ from typing import Dict, Any, List, Tuple, Optional
 from loguru import logger
 
 from .eviction_policies import EvictionPolicy, FIFOPolicy, LRUPolicy, LFUPolicy
+from retrieval_qa_benchmark.utils.profiler import PROFILER
 
 
 def init_cache(embedding_dim=768):
@@ -57,6 +58,10 @@ class SemanticCache:
         # ID tracking
         self.next_id = 0
         self.all_ids = set()  # Track all IDs currently in the cache
+        
+        if "hits" not in PROFILER.counter:
+            PROFILER.counter["hits"] = 0
+            PROFILER.accumulator["hits"] = 0
         
         # logger.info(f"Initialized semantic cache with {eviction_policy} policy (max size: {max_size})")
     
@@ -111,12 +116,12 @@ class SemanticCache:
         Returns:
             tuple: (distances, entries) or (None, None) if no match.
         """
-        start_time = time.time()
         
         try:
             # Search for the nearest neighbor in the index
             D, I = self.index.search(np.array([query_embedding]), 1)
             
+            PROFILER.counter["hits"] += 1
             # Check if we found a match within the threshold
             # logger.info(f"distance: {D[0][0]}")
             if len(I) > 0 and len(I[0]) > 0 and D[0][0] <= self.threshold:
@@ -134,10 +139,9 @@ class SemanticCache:
                     
                     # logger.info(f"Cache hit for query embedding (question: {question[:50]}...)")
                     # logger.info(f"Distance: {D[0][0]:.3f} (threshold: {self.threshold})")
-                    
-                    end_time = time.time()
-                    elapsed_time = end_time - start_time
                     # logger.info(f"Cache lookup time: {elapsed_time:.3f} seconds")
+                    
+                    PROFILER.accumulator["hits"] += 1
                     
                     return distances, entries
             
