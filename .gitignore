@@ -161,6 +161,6 @@ cython_debug/
 
 
 .ruff_cache
-*.jsonl
+# *.jsonl
 *.parquet
 results*/
