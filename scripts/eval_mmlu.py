@@ -9,12 +9,16 @@ from retrieval_qa_benchmark.evaluators import *
 from retrieval_qa_benchmark.transforms import *
 from retrieval_qa_benchmark.utils.config import load
 from retrieval_qa_benchmark.utils.factory import EvaluatorFactory
+from parse_result import process_file
 
 p = ArgumentParser("Evaluation script for MMLU dataset")
 p.add_argument("--config", "-c", default="../config/mmlu-2.yaml")
 p.add_argument("--mmlu-subset", "-set", default="prehistory")
 p.add_argument("--outdir", "-o", default="results")
 p.add_argument("--topk", "-k", default=5)
+p.add_argument("--threshold", "-t", default=1)
+p.add_argument("--cachesize", "-s", default=100)
+p.add_argument("--cachepolicy", "-p", default="LRU")
 
 args = p.parse_args()
 config = load(open(args.config))
@@ -26,6 +30,12 @@ assert (
 
 config["evaluator"]["dataset"]["args"] = {"subset": args.mmlu_subset}
 logger.info(f"Evaluating MMLU-{config['evaluator']['dataset']['args']['subset']}")
+
+print(config)
+
+config["evaluator"]["transform"]["nodes"][0]['args']['cache_threshold'] = args.threshold
+config["evaluator"]["transform"]["nodes"][0]['args']['cache_max_size'] = args.cachesize
+config["evaluator"]["transform"]["nodes"][0]['args']['cache_policy'] = args.cachepolicy
 
 outfile_result = path.join(
     args.outdir, f"mmlu_{args.mmlu_subset}", f"{args.topk}_m100_p40_gpt35.jsonl"
@@ -46,3 +56,9 @@ with open(outfile_result, "w") as f:
             + [r.model_dump_json() for r in matched]
         )
     )
+
+analysis_out_path = path.join(
+    args.outdir, f"mmlu_{args.mmlu_subset}", f"{args.topk}_m100_p40_gpt35_analysis.txt"
+)
+
+process_file(outfile_result, analysis_out_path)

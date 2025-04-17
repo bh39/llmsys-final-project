@@ -6,9 +6,10 @@ args:
   msc_user: 'chatdata'
   msc_pass: 'myscale_rocks'
   table_name: wiki.Wikipedia
-  num_selected: 5
-  
+  num_selected: 10
+
   cache_threshold: 6
   cache_max_size: 100
   cache_policy: LRU  # Can be FIFO, LRU, or LFU
+  index_type: 'L2'
   enable_cache: true

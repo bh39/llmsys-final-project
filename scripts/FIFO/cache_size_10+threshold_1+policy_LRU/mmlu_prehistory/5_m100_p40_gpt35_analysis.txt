@@ -1,0 +1,12 @@
+
+Average values in profile_time:
+----------------------------------------
+cache.add.profile: 1.1493123096
+cache.lookup.profile: 0.5869488967
+database.MyScaleSearcher.retrieve.profile: 54.1586298380
+database.MyScaleSearcherWithCache.search.profile: 66.3795353089
+hits: 0.0030959752
+model.tgi.profile: 422.9434296812
+transform.MyScaleSemanticCache.profile: 66.4675161934
+transform.TransformChain.profile: 66.5153453225
+transform.base.profile: 66.4650456455

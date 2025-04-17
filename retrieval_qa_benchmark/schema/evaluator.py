@@ -85,7 +85,6 @@ class BaseEvaluator(BaseModel):
                     result.append(pred)  # type: ignore
                 else:
                     raise TypeError(f"Unknown returned type `{type(d_)}`")
-                print(PROFILER)
                 PROFILER.clear()
             except Exception as e:
                 logger.error(f"Failed to evaluate record {str(d)}")
