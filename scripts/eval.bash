@@ -4,10 +4,11 @@
 CACHE_SIZES=(10 20 50 100 200)
 CACHE_THRESHOLDS=(1 2 4 6 8 10)
 
+
 # Base config and output paths
 CONFIG="../config/mmlu-3.yaml"
-BASE_OUTDIR="FIFO"
-POLICY="FIFO"
+POLICY="LFU"
+BASE_OUTDIR="LFU"
 
 mkdir -p ${BASE_OUTDIR}
 

@@ -2,7 +2,7 @@ import os
 import re
 import csv
 
-main_dir = 'scripts/LRU'
+main_dir = 'scripts/LFU'
 
 scripts_dir = 'scripts'
 os.makedirs(scripts_dir, exist_ok=True)
@@ -86,7 +86,7 @@ for subdir in os.listdir(main_dir):
         else:
             accuracies.append(None)
 
-with open(os.path.join(scripts_dir, 'metrics.csv'), 'w', newline='') as f:
+with open(os.path.join(scripts_dir, 'LFU_metrics.csv'), 'w', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(['Cache Size', 'Threshold', 'Policy', 'VectorDB Latency (ms)', 
                      'Retrieve Latency (ms)', 'Accuracy', 'Hit Rate (%)'])
