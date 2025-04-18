@@ -2,7 +2,7 @@ import os
 import re
 import csv
 
-main_dir = 'scripts/LFU'
+main_dir = 'scripts/LRU'
 
 scripts_dir = 'scripts'
 os.makedirs(scripts_dir, exist_ok=True)
@@ -54,13 +54,13 @@ for subdir in os.listdir(main_dir):
                 
                 retrieve_match = re.search(retrieve_pattern, content)
                 if retrieve_match:
-                    vector_db_latencies.append(float(retrieve_match.group(1)) * 1000)
+                    vector_db_latencies.append(float(retrieve_match.group(1)))
                 else:
                     vector_db_latencies.append(None)
                 
                 search_match = re.search(search_pattern, content)
                 if search_match:
-                    retrieve_latencies.append(float(search_match.group(1)) * 1000)
+                    retrieve_latencies.append(float(search_match.group(1)))
                 else:
                     retrieve_latencies.append(None)
                 
@@ -86,7 +86,7 @@ for subdir in os.listdir(main_dir):
         else:
             accuracies.append(None)
 
-with open(os.path.join(scripts_dir, 'LFU_metrics.csv'), 'w', newline='') as f:
+with open(os.path.join(scripts_dir, 'LRU_metrics.csv'), 'w', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(['Cache Size', 'Threshold', 'Policy', 'VectorDB Latency (ms)', 
                      'Retrieve Latency (ms)', 'Accuracy', 'Hit Rate (%)'])
