@@ -43,86 +43,8 @@ class MyScaleSearcherWithCache(MyScaleSearcher):
                 index_type=self.index_type,
                 embedding_dim=embedding_dim
             )
-            # logger.info(f"Initialized semantic cache with policy {self.cache_policy}")
         else:
             self.semantic_cache = None
-            # logger.info("Semantic cache is disabled")
-
-    # @PROFILER.profile_function("database.MyScaleSearcherWithCache.search.profile")
-    # def search(
-    #     self,
-    #     query_list: list,
-    #     num_selected: int,
-    #     context: Optional[List[List[str]]] = None,
-    # ) -> Tuple[List[List[float]], List[List[Entry]]]:
-    #     """Search for documents matching the queries, using cache when available."""
-    #     assert len(query_list) == 1, "MyScale currently does not support batch mode."
-
-    #     # Generate embedding for the query only once
-    #     query = query_list[0]
-    #     query_embedding = self.model.encode(query)
-
-    #     # Try to get results from cache if enabled
-    #     if self.enable_cache and self.semantic_cache:
-    #         distances, entries = self.semantic_cache.search(query_embedding)
-    #         if distances is not None and entries is not None:
-    #             logger.info("Query served from cache")
-    #             return [distances], [entries]
-
-    #     # If cache miss or cache disabled, perform actual search
-    #     # But avoid calling super().search() which would re-encode the query
-    #     # logger.info("Cache miss or disabled, performing database search")
-
-    #     # The following code is adapted from MyScaleSearcher.search
-    #     if context is not None and context not in [[], [None]]:
-    #         logger.warning("Ignoring context data in myscale search...")
-
-    #     # Use the embedding we already computed instead of re-encoding
-    #     emb_list = [query_embedding]
-
-    #     query_sql = f"""SELECT d, title, text FROM {self.table_name}
-    #         ORDER BY distance(emb,
-    #             [{','.join(map(str, emb_list[0].tolist()))}]) AS d
-    #         LIMIT {self.num_filtered if self.two_staged else num_selected}
-    #         """
-
-    #     if self.two_staged:
-    #         self.ke_model.extract_keywords_from_text(query)
-    #         from retrieval_qa_benchmark.transforms.searchers.myscale import is_sql_safe
-    #         terms = [w for w in self.ke_model.get_ranked_phrases() if is_sql_safe(w)][
-    #             : self.kw_topk
-    #         ]
-    #         terms_pattern = [f"(?i){x}" for x in terms]
-    #         query_sql = (
-    #             f"SELECT tempt.text AS text, tempt.title AS title, "
-    #             f"distance1 + distance2 + tempt.d AS d "
-    #             f"FROM ({query_sql}) tempt "
-    #             f"ORDER BY "
-    #             f"length(multiMatchAllIndices(arrayStringConcat("
-    #             f"[tempt.title, tempt.text], ' '), {terms_pattern})) "
-    #             f"AS distance1 DESC, "
-    #             f"log(1 + countMatches(arrayStringConcat([tempt.title, "
-    #             f"tempt.text], ' '), '(?i)({'|'.join(terms)})')) "
-    #             f"AS distance2, d DESC LIMIT {num_selected}"
-    #         )
-
-    #     result = self.retrieve(query_sql)
-    #     entry_list = [
-    #         [
-    #             Entry(rank=i, paragraph_id=i, title=r["title"], paragraph=r["text"])
-    #             for i, r in enumerate(result)
-    #         ]
-    #     ]
-    #     D_list = [[float(r["d"]) for r in result]]
-
-    #     # Add results to cache if enabled
-    #     if self.enable_cache and self.semantic_cache:
-    #         try:
-    #             self.semantic_cache.add(query, query_embedding, D_list[0], entry_list[0])
-    #         except Exception as e:
-    #             logger.error(f"Failed to add to cache: {e}")
-
-    #     return D_list, entry_list
 
     @PROFILER.profile_function("cache.lookup.profile")
     def lookup_in_cache(self, query_embedding: np.ndarray) -> Tuple[Optional[List[float]], Optional[List[Entry]]]:
@@ -139,7 +61,6 @@ class MyScaleSearcherWithCache(MyScaleSearcher):
 
         distances, entries = self.semantic_cache.search(query_embedding)
         if distances is not None and entries is not None:
-            # logger.info("Query served from cache")
             return distances, entries
 
         return None, None

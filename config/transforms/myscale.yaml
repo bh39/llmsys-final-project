@@ -1,6 +1,6 @@
 type: MyScale
 args:
-  msc_host: "msc-950b9f1f.us-east-1.aws.myscale.com"
+  msc_host: "your myscale backend"
   msc_port: 443
   msc_user: 'chatdata'
   msc_pass: 'myscale_rocks'
